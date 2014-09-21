@@ -1,0 +1,48 @@
+---
+title: "PRACTICAL MACHINE LEARNING: PROJECT WRITE UP"
+---
+
+  	 
+#Introduction
+
+In today's world the need for proper and regular exercise is growing tremendously because of the busy lifestyle of the people. But the methods to guide people towards proper exercise are limited only to manual guidance i.e. an instructor is required to guide them. This makes the task of regular exercise tougher than it is. Therefore, there is a need to automate the process of training and exercise. This Project focuses on investigating the possibility of automating the guidance required for proper exercise by the use of various sensors. These sensors are attached to various body parts of the person and track different movements. These movements are then assessed with respect to their correctness and efficacy and are used to train the automated system. The aim of developing this kind of system is to detect any mistakes during execution of an activity, suggest the correct way and provide feedback for the entire session. In this project we are provided with sensor data of 6 peoples namely Aldemo, Carlitos, Charles, Eurico, Jeremy and Pedro along with correctness of their method of performing exercise. Our work is to develop a model with this data that can be used to assist these people with their exercise in future.       
+
+#Method 
+
+There are two sets of data for this project: training and testing provided by Groupware. Training data of these 6 participants was used to build a classification model and train the model. These are the basic steps followed to build this model:
+
+##1.	Pre Processing
+The first step was to convert the raw training data into a dataset which contains more relevant and decisive information. Therefore, some basic pre-processing was done on the raw dataset.
+
+- First, I generated the summary of the dataset.  It helped me to identify the predictors which comprised of mostly "NA" values or are blanks. These 41 predictors were removed as they do not contain any information and also increase the model building time (if the model has to take care of these predictors).
+	
+-  Next, I looked for the predictors that has near-zero Variance. For this I used the nearZeroVar function from the Caret Package. These predictors were also removed as they do not capture the variance of the class variable. This could have been taken care of by many CART models but again it would increase the time for model building. And also if we end up using a classification model that doesn't take care of these weak predictors then it would lead to over-fitting. So, after this I was left with 59 predictors (including the Class column).
+
+- Lastly, I removed the serial number, Time Stamp columns and new window column thereby, resulting in a subset of the original training Data. This subset contained 54 predictors (including the Class column).
+
+##2. Finding Correlation between Predictors
+
+I thought of using "Correlation based feature selection" by Dr. Mark Hall to decide which of the 54 predictors chosen before were good or strong to train the machine learning model. But later, while selecting the model for MI I decided to go with Random Forest thus eliminating the need for "Correlation based feature selection" because RF already takes care of strong feature selection.
+
+##3. Cross Validation 
+The refined training dataset was then further subdivided into sub training and sub testing dataset using cross validation. This was done to avoid over fitting which would lead to a quite accurate model fit for the training dataset but a higher misclassification error for the testing dataset. Out of the various cross validation approaches (random sub sampling/ k fold/ leave one out (LOO)) I used k-fold cross validation with repetition. This is because LOO requires more computational time since the data instances are more. I used 10 fold cross validation with 10 times repetition.
+The cross validation was done as a part of the trainControl function from the Caret package.
+
+##4. Model Fitting
+The basic technique used for classification is CART. Since there are various classification tree model that can be used I decided to choose Random Forest approach which is an extended approach of bagging. The idea behind random forest approach is that it creates number of independent tress (as compared to bagging) using bootstrapped samples and variables. These independent models are then averaged out or voted to predict the class for a new variable. This was again done using the train function from Caret package. Another advantage for using RF was that of eliminating the weak predictors thereby reducing the biasness it can introduce.
+I also thought of using Boosting (GBM) for classification. This is an iterative procedure where it weights each of the model fitted on these predictors according to the model errors. 
+Among these two models I found random forest to be better. This is because Random Forests can be easily used in a distributed fashion due to the fact that they can run in parallel, whereas Gradient Boosted Machines only run trial after trial. And since the Dataset in the problem we are trying to solve is huge, I thought of going with Random Forests.
+
+##5. Implementation
+After doing pre-processing of the Data I divided the refined data according to the 6 people present in this study. This step resulted in 6 different Subsets containing approximately 3500 instances each corresponding to 1 person. This helped me in reducing the time taken by Random Forest to train the model.
+
+#Results
+After training all the 6 data subsets for each individual I got accuracy more than 99% for all the subsets in Cross Validation. Then I applied the trained models to predict the test Data given to us in this project. The developed model performed very nicely on the test set as all the predictions made by it were right.
+
+#Conclusion
+This exercise shows very promising results in automating the expertise of a trainer or guide by using various sensors and standard pattern recognition techniques. It can help people in assessing their mistakes during exercise and also provide them with valuable feedback in real-time.
+
+
+
+
+
